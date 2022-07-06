@@ -17,17 +17,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v3
+          DOCKER_REGISTRY_URL: docker.io
+          
+      - name: Build_main :latest
+        run: docker build -f ./main/Dockerfile -t rint3579/dockertest_main:latest .
+        
+      - name: Build_dev :latest
+        run: docker build -f ./dev/Dockerfile -t rint3579/dockertest_dev:latest .
+        
+      - name: Deploy :latest
+        if: success()
+        uses: actions-hub/docker@master
         with:
-          images: rint3579/dockertest
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          args: push rint3579/imagename:latest
